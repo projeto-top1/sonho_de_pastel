@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardápio Digital - Sonho de Pastel</title>
+  <style>
+    /* Estilos Globais */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #a10000; /* Vermelho da logo */
+      color: #fff;
+    }
+
+    /* Cabeçalho */
+    header {
+      background-color: #fcb700; /* Amarelo da logo */
+      padding: 20px;
+      text-align: center;
+      color: #a10000;
+      font-size: 1.5em;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 1em;
+    }
+
+    /* Conteúdo Principal */
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Itens do Cardápio */
+    .menu {
+      width: 90%;
+      max-width: 600px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .item {
+      background-color: #fff;
+      color: #a10000;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .item h2 {
+      margin: 0 0 10px;
+      font-size: 1.2em;
+    }
+
+    .item p {
+      margin: 0 0 10px;
+      font-weight: bold;
+    }
+
+    button {
+      background-color: #fcb700;
+      border: none;
+      color: #a10000;
+      padding: 8px 12px;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #e6a700;
+    }
+
+    /* Carrinho de Pedidos */
+    #carrinho {
+      margin-top: 30px;
+      background-color: #fff;
+      color: #a10000;
+      padding: 15px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    #carrinho h3 {
+      margin: 0 0 10px;
+      text-align: center;
+    }
+
+    #lista-carrinho {
+      list-style: none;
+      padding: 0;
+    }
+
+    #lista-carrinho li {
+      border-bottom: 1px solid #ccc;
+      padding: 5px 0;
+    }
+
+    #total {
+      font-weight: bold;
+    }
+
+    #carrinho button {
+      width: 100%;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sonho de Pastel</h1>
+    <p>Crocante, saboroso e irresistível</p>
+  </header>
+
+  <main>
+    <section class="menu">
+      <div class="item">
+        <h2>Pastel de Queijo</h2>
+        <p>R$ 8,00</p>
+        <button onclick="adicionarAoCarrinho('Pastel de Queijo', 8)">Pedir</button>
+      </div>
+      <div class="item">
+        <h2>Pastel de Carne</h2>
+        <p>R$ 10,00</p>
+        <button onclick="adicionarAoCarrinho('Pastel de Carne', 10)">Pedir</button>
+      </div>
+      <div class="item">
+        <h2>Pastel de Frango</h2>
+        <p>R$ 9,00</p>
+        <button onclick="adicionarAoCarrinho('Pastel de Frango', 9)">Pedir</button>
+      </div>
+      <div class="item">
+        <h2>Pastel de Pizza</h2>
+        <p>R$ 11,00</p>
+        <button onclick="adicionarAoCarrinho('Pastel de Pizza', 11)">Pedir</button>
+      </div>
+    </section>
+
+    <aside id="carrinho">
+      <h3>Seu Pedido</h3>
+      <ul id="lista-carrinho"></ul>
+      <p>Total: R$ <span id="total">0</span></p>
+      <button onclick="finalizarPedido()">Finalizar Pedido</button>
+    </aside>
+  </main>
+
+  <script>
+  // Variáveis globais para carrinho
+  let carrinho = [];
+  let total = 0;
+
+  function adicionarAoCarrinho(item, preco) {
+    carrinho.push({ item, preco });
+    total += preco;
+    atualizarCarrinho();
+  }
+
+  function atualizarCarrinho() {
+    const listaCarrinho = document.getElementById('lista-carrinho');
+    const totalSpan = document.getElementById('total');
+
+    listaCarrinho.innerHTML = '';
+    carrinho.forEach((produto, index) => {
+      listaCarrinho.innerHTML += `<li>${produto.item} - R$ ${produto.preco} 
+        <button onclick="removerDoCarrinho(${index})" style="margin-left: 10px;">X</button></li>`;
+    });
+
+    totalSpan.innerText = total;
+  }
+
+  function removerDoCarrinho(index) {
+    total -= carrinho[index].preco;
+    carrinho.splice(index, 1);
+    atualizarCarrinho();
+  }
+
+  // Salva pedidos no LocalStorage
+  function finalizarPedido() {
+    const pedidosSalvos = JSON.parse(localStorage.getItem('pedidos')) || [];
+    const novoPedido = carrinho.map((item, index) => ({
+      id: pedidosSalvos.length + index + 1,
+      item: item.item,
+      status: 'Recebido'
+    }));
+
+    // Atualiza pedidos no LocalStorage
+    localStorage.setItem('pedidos', JSON.stringify([...pedidosSalvos, ...novoPedido]));
+
+    alert('Pedido finalizado! Total: R$ ' + total);
+    carrinho = [];
+    total = 0;
+    atualizarCarrinho();
+  }
+</script>
+
+</body>
+</html>
