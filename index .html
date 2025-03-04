@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cupons</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div>
+        <h1>Sistema de Cupons</h1>
+        <div id="cupons">
+            <input type="number" id="valor-cupom" placeholder="Valor do Cupom">
+            <select id="metodo-cupom">
+                <option value="dinheiro">Dinheiro</option>
+                <option value="cartao">Cartão</option>
+            </select>
+            <button onclick="adicionarCupom()">Adicionar Cupom</button>
+        </div>
+        <button onclick="calcular()">Calcular</button>
+        <button onclick="limparTudo()">Limpar Tudo</button>
+        <p>Total em Dinheiro: <span id="total-dinheiro">0</span></p>
+        <p>Total em Cartão: <span id="total-cartao">0</span></p>
+        <div id="lista-cupons"></div>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
