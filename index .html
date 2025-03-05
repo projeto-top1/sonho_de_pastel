@@ -1,28 +1,36 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Cupons</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão de Dinheiro</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4CAF50">
 </head>
 <body>
+  <div class="container">
+    <h1>Gestão de Dinheiro - Entregador</h1>
     <div>
-        <h1>Sistema de Cupons</h1>
-        <div id="cupons">
-            <input type="number" id="valor-cupom" placeholder="Valor do Cupom">
-            <select id="metodo-cupom">
-                <option value="dinheiro">Dinheiro</option>
-                <option value="cartao">Cartão</option>
-            </select>
-            <button onclick="adicionarCupom()">Adicionar Cupom</button>
-        </div>
-        <button onclick="calcular()">Calcular</button>
-        <button onclick="limparTudo()">Limpar Tudo</button>
-        <p>Total em Dinheiro: <span id="total-dinheiro">0</span></p>
-        <p>Total em Cartão: <span id="total-cartao">0</span></p>
-        <div id="lista-cupons"></div>
+      <label for="valor-recebido">Valor Recebido (R$):</label>
+      <input type="number" id="valor-recebido" />
     </div>
-    <script src="scripts.js"></script>
+    <div>
+      <label for="valor-gasto">Valor Utilizado como Troco (R$):</label>
+      <input type="number" id="valor-gasto" />
+    </div>
+    <button id="adicionar">Adicionar Valor</button>
+    <button id="adicionar-pedido">Adicionar Pedido Entregue</button>
+    <button id="redefinir">Reiniciar Rotas</button>
+    <h3>Saldo Atual na Bolsa: R$ <span id="saldo">150.00</span></h3>
+    <h3>Valor a Prestar Contas: R$ <span id="contas-prestar">0.00</span></h3>
+    <h3>Pedidos Entregues: <span id="pedidos">0</span></h3>
+  </div>
+  <script src="script.js">
+      if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("/service-worker.js")
+    .then(() => console.log("Service Worker registrado com sucesso!"))
+    .catch((error) => console.error("Falha ao registrar o Service Worker:", error));} </script>
 </body>
 </html>
