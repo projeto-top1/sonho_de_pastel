@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Entregas v3.0</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0066cc">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Entregas">
+    <meta name="msapplication-TileColor" content="#0066cc">
+    <meta name="msapplication-navbutton-color" content="#0066cc">
+    <meta name="application-name" content="Sistema de Entregas">
+    <meta name="description" content="Sistema de controle de entregas com metas e bonificações">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiMwMDY2Y2MiLz4KPHBhdGggZD0iTTQ4IDk2aDk2djQ4SDQ4Vjk2WiIgZmlsbD0iI2RjMzU0NSIvPgo8cGF0aCBkPSJNNzIgNzJoNDh2MjRINzJWNzJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNOTYgNDhoMjR2MjRIOTZWNDhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-truck"></i> Sistema de Entregas v3.0</h1>
+            <div class="header-stats">
+                <div class="stat-card">
+                    <span class="stat-value" id="totalEntregas">0</span>
+                    <span class="stat-label">Total de Entregas</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="bonificacaoTotal">R$ 0,00</span>
+                    <span class="stat-label">Bonificação Total</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="input-section">
+                <div class="card">
+                    <h2><i class="fas fa-plus-circle"></i> Registrar Entrega</h2>
+                    <div class="input-group">
+                        <input type="date" id="dataEntrega" class="input-field">
+                        <input type="number" id="quantidadeEntrega" placeholder="Quantidade de entregas" class="input-field" min="1">
+                        <button onclick="adicionarEntrega()" class="btn-primary">
+                            <i class="fas fa-save"></i> Registrar
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="card stat-card-large">
+                        <h3><i class="fas fa-calendar-week"></i> Semanal</h3>
+                        <div class="stat-content">
+                            <span class="stat-number" id="entregasSemanal">0</span>
+                            <span class="stat-description">entregas esta semana</span>
+                        </div>
+                    </div>
+
+                    <div class="card stat-card-large">
+                        <h3><i class="fas fa-calendar-alt"></i> Quinzenal</h3>
+                        <div class="stat-content">
+                            <span class="stat-number" id="entregasQuinzenal">0</span>
+                            <span class="stat-description">entregas nesta quinzena</span>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progressoQuinzena"></div>
+                                </div>
+                                <span class="progress-text" id="progressoTexto">0 / 200</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card stat-card-large">
+                        <h3><i class="fas fa-calendar"></i> Mensal</h3>
+                        <div class="stat-content">
+                            <span class="stat-number" id="entregasMensal">0</span>
+                            <span class="stat-description">entregas este mês</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="meta-section">
+                <div class="card">
+                    <h3><i class="fas fa-target"></i> Meta Quinzenal</h3>
+                    <div class="meta-content">
+                        <div class="meta-item">
+                            <span class="meta-label">Meta:</span>
+                            <span class="meta-value">200 entregas</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Faltam:</span>
+                            <span class="meta-value" id="faltamMeta">200 entregas</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Excedente:</span>
+                            <span class="meta-value" id="excedente">0 entregas</span>
+                        </div>
+                        <div class="meta-item bonificacao">
+                            <span class="meta-label">Bonificação Quinzenal:</span>
+                            <span class="meta-value" id="bonificacaoQuinzenal">R$ 0,00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="historico-section">
+                <div class="card">
+                    <h3><i class="fas fa-history"></i> Histórico de Entregas</h3>
+                    <div class="historico-container">
+                        <div class="historico-header">
+                            <span>Data</span>
+                            <span>Quantidade</span>
+                            <span>Ações</span>
+                        </div>
+                        <div id="historicoLista" class="historico-lista">
+                            <div class="empty-state">
+                                <i class="fas fa-box-open"></i>
+                                <p>Nenhuma entrega registrada ainda</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="relatorio-section">
+                <div class="card">
+                    <h3><i class="fas fa-chart-bar"></i> Relatório Mensal</h3>
+                    <div class="relatorio-grid">
+                        <div class="relatorio-item">
+                            <span class="relatorio-label">Média diária:</span>
+                            <span class="relatorio-valor" id="mediaDiaria">0</span>
+                        </div>
+                        <div class="relatorio-item">
+                            <span class="relatorio-label">Melhor dia:</span>
+                            <span class="relatorio-valor" id="melhorDia">-</span>
+                        </div>
+                        <div class="relatorio-item">
+                            <span class="relatorio-label">Total de bonificações:</span>
+                            <span class="relatorio-valor" id="totalBonificacoes">R$ 0,00</span>
+                        </div>
+                        <div class="relatorio-item">
+                            <span class="relatorio-label">Dias trabalhados:</span>
+                            <span class="relatorio-valor" id="diasTrabalhados">0</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h3 id="modalTitulo"></h3>
+            <p id="modalMensagem"></p>
+            <div class="modal-buttons">
+                <button onclick="fecharModal()" class="btn-secondary">Cancelar</button>
+                <button id="modalConfirmar" class="btn-danger">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

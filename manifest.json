@@ -1,0 +1,27 @@
+
+{
+  "name": "Sistema de Entregas v3.0",
+  "short_name": "Entregas",
+  "description": "Sistema de controle de entregas com metas e bonificações",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0066cc",
+  "theme_color": "#0066cc",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiMwMDY2Y2MiLz4KPHBhdGggZD0iTTQ4IDk2aDk2djQ4SDQ4Vjk2WiIgZmlsbD0iI2RjMzU0NSIvPgo8cGF0aCBkPSJNNzIgNzJoNDh2MjRINzJWNzJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNOTYgNDhoMjR2MjRIOTZWNDhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iNjQiIGZpbGw9IiMwMDY2Y2MiLz4KPHBhdGggZD0iTTEyOCAyNTZoMjU2djEyOEgxMjhWMjU2WiIgZmlsbD0iI2RjMzU0NSIvPgo8cGF0aCBkPSJNMTkyIDE5MmgxMjh2NjRIMTkyVjE5MloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0yNTYgMTI4aDY0djY0aC02NFYxMjhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["productivity", "business"],
+  "lang": "pt-BR",
+  "dir": "ltr"
+}
