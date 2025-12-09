@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sonho de Pastel | Gestor Ultimate</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS BASE --- */
+        :root { --primary: #D90429; --secondary: #2B2D42; --bg: #EDF2F4; --success: #16a34a; --warning: #ca8a04; --info: #3b82f6; --text: #212529; --sidebar-width: 250px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); display: flex; height: 100vh; overflow: hidden; color: var(--text); }
+        
+        /* LAYOUT */
+        .sidebar { width: var(--sidebar-width); background: var(--secondary); color: white; display: flex; flex-direction: column; padding: 20px; transition: 0.3s; flex-shrink: 0; }
+        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; width: 100%; }
+        
+        /* MENU */
+        .brand { font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
+        .menu-item { padding: 15px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; color: #a0a0a0; font-weight: 600; transition: 0.2s; }
+        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.1); color: white; }
+        .menu-item.active { border-left: 4px solid var(--primary); }
+        .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: var(--secondary); z-index: 1000; padding: 10px; justify-content: space-around; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+        .mob-item { color: #a0a0a0; text-align: center; font-size: 0.8rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .mob-item.active { color: var(--primary); }
+
+        /* HEADER */
+        header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; height: 70px; flex-shrink: 0; }
+        .kpi-container { display: flex; gap: 20px; }
+        .kpi-box { display: flex; flex-direction: column; }
+        .kpi-label { font-size: 0.75rem; color: #666; font-weight: bold; text-transform: uppercase; }
+        .kpi-value { font-size: 1.2rem; font-weight: 800; color: var(--secondary); }
+
+        /* VIEWS */
+        .view-section { display: none; height: calc(100vh - 70px); padding: 20px; overflow-y: auto; scroll-behavior: smooth; }
+        .view-section.active { display: block; }
+
+        /* KANBAN */
+        .kanban { display: flex; gap: 20px; height: 100%; overflow-x: auto; padding-bottom: 10px; }
+        .column { flex: 1; min-width: 300px; background: #e9ecef; border-radius: 12px; display: flex; flex-direction: column; max-height: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .col-header { padding: 15px; font-weight: 800; text-transform: uppercase; color: #555; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.03); border-radius: 12px 12px 0 0; position: sticky; top: 0; z-index: 10; backdrop-filter: blur(5px); }
+        .col-body { padding: 10px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .count-badge { background: #ccc; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; }
+
+        /* CARDS */
+        .card { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 5px solid #ccc; animation: slideIn 0.3s; position: relative; transition: 0.2s; }
+        .border-pending { border-left-color: var(--primary); }
+        .border-prep { border-left-color: var(--warning); }
+        .border-ready { border-left-color: var(--success); }
+        .card.delayed { background-color: #fff0f0; border: 2px solid red; }
+        .card.delayed::after { content: '⚠️ ATRASADO'; position: absolute; top: 5px; right: 5px; font-size: 0.6rem; font-weight: bold; color: red; background: #fee; padding: 2px 5px; border-radius: 4px; }
+        
+        .card-top { display: flex; justify-content: space-between; font-size: 0.85rem; color: #888; margin-bottom: 5px; }
+        .card-client { font-weight: 800; font-size: 1.1rem; margin-bottom: 5px; }
+        .card-timer { font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; gap: 4px; }
+        .tag { padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+        .tag-delivery { background: #e0f2fe; color: #0369a1; }
+        .tag-retirada { background: #fce7f3; color: #be185d; }
+        .items-list { margin: 10px 0; border-top: 1px dashed #eee; border-bottom: 1px dashed #eee; padding: 8px 0; font-size: 0.9rem; }
+        .item-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        
+        /* BOTÕES */
+        .actions { display: flex; gap: 5px; margin-top: 10px; }
+        .btn { flex: 1; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; font-size: 0.9rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn:active { transform: scale(0.98); }
+        .btn-print { background: #333; flex: 0 0 50px; }
+        .btn-next { background: var(--success); }
+
+        /* STATUS BT */
+        .bt-status { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; border: 1px solid #ddd; transition: 0.3s; }
+        .bt-disconnected { background: #f1f1f1; color: #666; }
+        .bt-connected { background: #dcfce7; color: #16a34a; border-color: #16a34a; }
+
+        /* HISTÓRICO TABLE */
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; min-width: 700px; }
+        .table-container { overflow-x: auto; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; vertical-align: middle; }
+        th { background: #f8f9fa; font-weight: 600; color: #555; }
+        
+        /* Botões do Histórico */
+        .btn-icon { width: 35px; height: 35px; border-radius: 5px; border: none; cursor: pointer; color: white; display: inline-flex; align-items: center; justify-content: center; margin-right: 5px; }
+        .btn-restore { background-color: var(--info); }
+        .btn-restore:hover { background-color: #2563eb; }
+        .btn-delete { background-color: var(--primary); }
+        .btn-delete:hover { background-color: #b91c1c; }
+
+        /* PRINT */
+        #print-area { display: none; }
+        @media print { body * { visibility: hidden; } #print-area, #print-area * { visibility: visible; } #print-area { display: block; position: absolute; left: 0; top: 0; width: 80mm; padding: 10px; color: black; background: white; font-family: 'Courier New', monospace; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* RESPONSIVO */
+        @media (max-width: 768px) {
+            .sidebar { display: none; } .mobile-nav { display: flex; }
+            header { height: auto; flex-direction: column; gap: 10px; padding: 15px; }
+            .kpi-container { width: 100%; justify-content: space-between; }
+            .view-section { height: calc(100vh - 140px); padding: 10px; padding-bottom: 80px; }
+            .kanban { flex-direction: column; display: block; }
+            .column { min-width: 100%; margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand"><i class="fas fa-utensils"></i> GESTOR ULTIMATE</div>
+        <div class="menu-item active" onclick="switchTab('board')"><i class="fas fa-columns"></i> Quadro</div>
+        <div class="menu-item" onclick="switchTab('history')"><i class="fas fa-history"></i> Histórico</div>
+        <div style="margin-top: auto; font-size: 0.8rem; text-align: center; opacity: 0.5;">v2.3</div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <header>
+            <div class="kpi-container">
+                <div class="kpi-box"><span class="kpi-label">Pedidos Hoje</span><span class="kpi-value" id="kpi-count">0</span></div>
+                <div class="kpi-box" style="border-left: 1px solid #ddd; padding-left: 20px; border-left-color: transparent;"><span class="kpi-label">Faturamento</span><span class="kpi-value" style="color:var(--success)" id="kpi-total">R$ 0,00</span></div>
+            </div>
+            <div style="display:flex; align-items:center; gap: 15px; width: 100%; justify-content: flex-end; margin-top: 5px;">
+                <button id="btn-bluetooth" class="bt-status bt-disconnected" onclick="btManager.connect()"><i class="fab fa-bluetooth-b"></i> <span id="bt-text">Conectar</span></button>
+                <button onclick="toggleSound()" id="btn-sound" style="background:none; border:none; cursor:pointer; font-size:1.4rem; color:#666;"><i class="fas fa-volume-up"></i></button>
+            </div>
+        </header>
+
+        <!-- VIEW BOARD -->
+        <section id="view-board" class="view-section active">
+            <div class="kanban">
+                <div class="column"><div class="col-header" style="border-bottom: 3px solid var(--primary);">PENDENTES <span class="count-badge" id="count-pending">0</span></div><div class="col-body" id="list-pending"></div></div>
+                <div class="column"><div class="col-header" style="border-bottom: 3px solid var(--warning);">COZINHA <span class="count-badge" id="count-prep">0</span></div><div class="col-body" id="list-prep"></div></div>
+                <div class="column"><div class="col-header" style="border-bottom: 3px solid var(--success);">PRONTOS <span class="count-badge" id="count-ready">0</span></div><div class="col-body" id="list-ready"></div></div>
+            </div>
+        </section>
+
+        <!-- VIEW HISTORY -->
+        <section id="view-history" class="view-section">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h2>Histórico</h2>
+                <button class="btn" style="background:#333; width:auto; flex:0 0 auto; padding:10px 20px;" onclick="fetchHistory()"><i class="fas fa-sync"></i> Atualizar</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>ID</th><th>Data</th><th>Cliente</th><th>Total</th><th>Status</th><th>Ações</th></tr></thead>
+                    <tbody id="history-table-body"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <nav class="mobile-nav">
+        <div class="mob-item active" onclick="switchTab('board')"><i class="fas fa-columns"></i><span>Quadro</span></div>
+        <div class="mob-item" onclick="switchTab('history')"><i class="fas fa-history"></i><span>Histórico</span></div>
+    </nav>
+
+    <div id="print-area"></div>
+    <audio id="audio-alert" src="https://assets.mixkit.co/active_storage/sfx/933/933-preview.mp3"></audio>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <script>
+        // --- CONFIGURAÇÃO ---
+        const SUPABASE_URL = "https://wylqphdxmuafrkbrkpcq.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5bHFwaGR4bXVhZnJrYnJrcGNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEyMzI1MjIsImV4cCI6MjA3NjgwODUyMn0.btsFQ24zOtMnxFvMZWv5iJwuqMQKdZ6evecbBmKPbL8";
+        
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let soundEnabled = true;
+        let allOrders = [];
+
+        // --- BLUETOOTH MANAGER ---
+        const btManager = {
+            device: null, characteristic: null, isConnected: false,
+            connect: async () => {
+                try {
+                    btManager.device = await navigator.bluetooth.requestDevice({ filters: [{ services: ['000018f0-0000-1000-8000-00805f9b34fb'] }] });
+                    const server = await btManager.device.gatt.connect();
+                    const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
+                    btManager.characteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
+                    btManager.isConnected = true; btManager.updateUI(true);
+                    btManager.device.addEventListener('gattserverdisconnected', () => { btManager.isConnected = false; btManager.updateUI(false); });
+                } catch (e) { alert("Erro Bluetooth: " + e); }
+            },
+            updateUI: (c) => {
+                const btn = document.getElementById('btn-bluetooth');
+                if (c) { btn.classList.add('bt-connected'); btn.classList.remove('bt-disconnected'); document.getElementById('bt-text').innerText = "Conectado"; }
+                else { btn.classList.add('bt-disconnected'); btn.classList.remove('bt-connected'); document.getElementById('bt-text').innerText = "Conectar"; }
+            },
+            print: async (order) => {
+                if (!btManager.isConnected) { window.printOrderNative(order); return; }
+                try {
+                    const enc = new TextEncoder();
+                    const sanitize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    const cmds = [0x1B, 0x40, 0x1B, 0x61, 0x01]; // Init + Center
+                    cmds.push(...enc.encode(`SONHO DE PASTEL\n#${order.id}\n\n`));
+                    cmds.push(0x1B, 0x61, 0x00); // Left
+                    cmds.push(...enc.encode(`Cliente: ${sanitize(order.client_name)}\nTipo: ${sanitize(order.delivery_type)}\n`));
+                    if(order.address) cmds.push(...enc.encode(`End: ${sanitize(order.address)}\n`));
+                    cmds.push(...enc.encode("--------------------------------\n"));
+                    order.items.forEach(i => cmds.push(...enc.encode(`${i.qty}x ${sanitize(i.name)}\n`)));
+                    cmds.push(...enc.encode("--------------------------------\n"));
+                    cmds.push(0x1B, 0x45, 0x01); // Bold ON
+                    cmds.push(...enc.encode(`TOTAL: R$ ${parseFloat(order.total).toFixed(2)}\n`));
+                    cmds.push(0x1B, 0x45, 0x00); // Bold OFF
+                    cmds.push(...enc.encode(`Pag: ${sanitize(order.payment_method)}\n\n\n\n`));
+                    cmds.push(0x1D, 0x56, 0x41, 0x00); // Cut
+                    
+                    const data = new Uint8Array(cmds);
+                    for (let i = 0; i < data.length; i += 100) await btManager.characteristic.writeValue(data.slice(i, i + 100));
+                } catch (e) { alert("Erro ao imprimir"); btManager.isConnected = false; btManager.updateUI(false); }
+            }
+        };
+
+        // --- CORE FUNCTIONS ---
+        function init() {
+            fetchActiveOrders();
+            setupRealtime();
+            setInterval(renderBoard, 60000);
+        }
+
+        window.switchTab = function(tabName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.mob-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(`view-${tabName}`).classList.add('active');
+            const idx = tabName === 'board' ? 0 : 1;
+            if(document.querySelectorAll('.menu-item')[idx]) document.querySelectorAll('.menu-item')[idx].classList.add('active');
+            if(document.querySelectorAll('.mob-item')[idx]) document.querySelectorAll('.mob-item')[idx].classList.add('active');
+            if(tabName === 'history') fetchHistory();
+        }
+
+        async function fetchActiveOrders() {
+            const { data } = await _supabase.from('orders').select('*').neq('status', 'archived').order('created_at', { ascending: true });
+            if (data) { allOrders = data; renderBoard(); updateKPIs(); }
+        }
+
+        async function fetchHistory() {
+            const { data } = await _supabase.from('orders').select('*').eq('status', 'archived').order('created_at', { ascending: false }).limit(50);
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = '';
+            if(data) {
+                data.forEach(order => {
+                    const date = new Date(order.created_at).toLocaleString();
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>#${order.id}</td>
+                            <td>${date}</td>
+                            <td>${order.client_name}</td>
+                            <td>R$ ${parseFloat(order.total).toFixed(2)}</td>
+                            <td><span class="tag tag-delivery">Arquivado</span></td>
+                            <td>
+                                <button class="btn-icon btn-restore" onclick="restoreOrder(${order.id})" title="Restaurar"><i class="fas fa-undo"></i></button>
+                                <button class="btn-icon btn-delete" onclick="deletePermanent(${order.id})" title="Excluir"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                });
+            }
+        }
+
+        // --- LÓGICA DE REALTIME (RESSURREIÇÃO) ---
+        function setupRealtime() {
+            _supabase.channel('gestor-realtime')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
+                    if (payload.eventType === 'INSERT') {
+                        allOrders.push(payload.new);
+                        if (soundEnabled) document.getElementById('audio-alert').play().catch(e=>{});
+                    } 
+                    else if (payload.eventType === 'UPDATE') {
+                        const index = allOrders.findIndex(o => o.id === payload.new.id);
+                        
+                        // Caso 1: O pedido já estava na tela
+                        if (index !== -1) {
+                            if (payload.new.status === 'archived') {
+                                allOrders.splice(index, 1); // Saiu do quadro
+                            } else {
+                                allOrders[index] = payload.new; // Atualizou status no quadro
+                            }
+                        } 
+                        // Caso 2: O pedido foi restaurado do histórico (Ressurreição)
+                        else if (payload.new.status !== 'archived') {
+                            allOrders.push(payload.new);
+                        }
+                    } 
+                    else if (payload.eventType === 'DELETE') {
+                        allOrders = allOrders.filter(o => o.id !== payload.old.id);
+                    }
+                    renderBoard(); updateKPIs();
+                    // Se estiver na aba histórico, atualiza ela também
+                    if(document.getElementById('view-history').classList.contains('active')) fetchHistory();
+                }).subscribe();
+        }
+
+        // --- RENDERIZAR QUADRO ---
+        function renderBoard() {
+            ['pending', 'prep', 'ready'].forEach(s => {
+                document.getElementById(`list-${s}`).innerHTML = '';
+                document.getElementById(`count-${s}`).innerText = '0';
+            });
+            allOrders.forEach(order => {
+                const list = document.getElementById(`list-${order.status}`);
+                if (list) list.appendChild(createCardElement(order));
+            });
+            ['pending', 'prep', 'ready'].forEach(s => {
+                document.getElementById(`count-${s}`).innerText = document.getElementById(`list-${s}`).children.length;
+            });
+        }
+
+        function createCardElement(order) {
+            const div = document.createElement('div');
+            const diffMin = Math.floor((new Date() - new Date(order.created_at)) / 60000);
+            const isDelayed = diffMin > 20 && order.status !== 'ready';
+            div.className = `card border-${order.status} ${isDelayed ? 'delayed' : ''}`;
+            
+            let itemsHtml = '';
+            order.items.forEach(i => itemsHtml += `<div class="item-row"><span style="font-weight:600; color:#333;">${i.qty}x ${i.name}</span></div>`);
+            const btnPrint = `<button class="btn btn-print" onclick="handlePrint(${order.id})"><i class="fas fa-print"></i></button>`;
+            
+            let btns = '';
+            if (order.status === 'pending') btns = `${btnPrint} <button class="btn btn-next" onclick="updateStatus(${order.id}, 'prep')">Aceitar</button>`;
+            else if (order.status === 'prep') btns = `${btnPrint} <button class="btn btn-next" onclick="updateStatus(${order.id}, 'ready')">Pronto</button>`;
+            else if (order.status === 'ready') btns = `${btnPrint} <button class="btn btn-next" style="background:#333" onclick="updateStatus(${order.id}, 'archived')">Arquivar</button>`;
+
+            div.innerHTML = `
+                <div class="card-top"><span>#${order.id}</span><span class="card-timer"><i class="far fa-clock"></i> ${diffMin} min</span></div>
+                <div class="card-client">${order.client_name}</div>
+                <div style="margin-bottom:8px;"><span class="tag tag-${(order.delivery_type||'').toLowerCase()}">${order.delivery_type}</span></div>
+                ${order.address ? `<div style="font-size:0.8rem; color:#666; margin-bottom:8px;">${order.address}</div>` : ''}
+                <div class="items-list">${itemsHtml}</div>
+                <div style="display:flex; justify-content:space-between; font-weight:bold; margin-top:5px; color:var(--primary);"><span>${order.payment_method}</span><span>R$ ${parseFloat(order.total).toFixed(2)}</span></div>
+                <div class="actions">${btns}</div>
+            `;
+            return div;
+        }
+
+        // --- OPERAÇÕES ---
+        async function updateStatus(id, status) {
+            await _supabase.from('orders').update({ status: status }).eq('id', id);
+        }
+
+        async function restoreOrder(id) {
+            if(confirm('Deseja restaurar este pedido para Pendente?')) {
+                await _supabase.from('orders').update({ status: 'pending' }).eq('id', id);
+                // O realtime listener vai pegar essa mudança e jogar pro quadro automaticamente
+            }
+        }
+
+        async function deletePermanent(id) {
+            if(confirm('ATENÇÃO: Isso excluirá o pedido permanentemente do banco de dados. Continuar?')) {
+                await _supabase.from('orders').delete().eq('id', id);
+                fetchHistory(); // Atualiza a tabela manual
+            }
+        }
+
+        // --- UTILITÁRIOS ---
+        window.toggleSound = function() { soundEnabled = !soundEnabled; }
+        function updateKPIs() {
+            const total = allOrders.reduce((acc, curr) => acc + parseFloat(curr.total), 0);
+            document.getElementById('kpi-count').innerText = allOrders.length;
+            document.getElementById('kpi-total').innerText = 'R$ ' + total.toFixed(2);
+        }
+
+        window.handlePrint = function(id) {
+            const order = allOrders.find(o => o.id === id); if(!order) return;
+            btManager.isConnected ? btManager.print(order) : window.printOrderNative(order);
+        }
+
+        window.printOrderNative = function(order) {
+            const date = new Date(order.created_at).toLocaleString();
+            let itemsHtml = ''; order.items.forEach(i => itemsHtml += `<div class="ticket-item"><span>${i.qty}x ${i.name}</span><span></span></div>`);
+            const cupom = `<div class="ticket-header"><h2 style="margin:0">SONHO DE PASTEL</h2><p style="margin:5px 0">Pedido #${order.id}</p><p style="font-size:0.8rem">${date}</p></div><div style="margin-bottom:10px; font-weight:bold; font-size:1.1rem">${order.client_name}<br>${order.delivery_type.toUpperCase()}</div>${order.address ? `<div style="margin-bottom:10px; font-size:0.9rem">${order.address}</div>` : ''}<hr style="border-top:1px dashed #000">${itemsHtml}<div class="ticket-total">TOTAL: R$ ${parseFloat(order.total).toFixed(2)}</div><div style="text-align:center; margin-top:10px;">Pagamento: ${order.payment_method}</div>`;
+            const printArea = document.getElementById('print-area'); printArea.innerHTML = cupom; window.print();
+        }
+
+        init();
+    </script>
+</body>
+</html>
